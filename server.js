@@ -107,11 +107,11 @@ server.get("/shutdown", function(req, res, next)
 })
 
 server.get(".*", restify.serveStatic({
-  directory: (process.env.NGP_HOME || '.') + "/static",
+  directory: (process.env.FOGCTRL_HOME || '.') + "/static",
   default: "index.html"
 }))
 
-server.listen(80, function()
+server.listen(8096, function()
 {
 	console.log('%s listening at %s', server.name, server.url)
 })

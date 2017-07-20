@@ -9,7 +9,7 @@ PIN = 3
 wifi.sta.disconnect()
 wifi.sta.config(WIFIUSER, WIFIPASS)
 
-host = 'test.intelibo.com'
+host = 'fog.intelibo.com'
 port = 80
 
 ON = true
