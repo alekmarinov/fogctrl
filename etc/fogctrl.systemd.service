@@ -1,0 +1,16 @@
+[Unit]
+Description=esp8266 fog controller
+
+[Service]
+Environment=
+ExecStart=/usr/bin/node /srv/fogctrl
+ExecStop=/usr/bin/curl http://127.0.0.1:9091/shutdown
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=fogctrl
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
