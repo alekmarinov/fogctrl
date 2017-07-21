@@ -2,11 +2,19 @@
 print('esp8266 fog controller')
 -------------------------------------------------------------------------------
 
-WIFIUSER="intelibo"
-WIFIPASS="intelib@!"
-PIN = 3
+WIFIUSER="Juje"
+WIFIPASS="08978211188"
+-- WIFIUSER="Todor"
+-- WIFIPASS="7654321098e"
+-- WIFIUSER="aviqus"
+-- WIFIPASS="tarantula4"
 
+CTRL = 3
+LIGHT = 4
+
+wifi.setmode(wifi.STATIONAP)
 wifi.sta.disconnect()
+print("WiFi connect to "..WIFIUSER..":"..WIFIPASS)
 wifi.sta.config(WIFIUSER, WIFIPASS)
 
 host = 'fog.intelibo.com'
@@ -15,7 +23,8 @@ port = 80
 ON = true
 OFF = false
 
-gpio.mode(PIN, gpio.OUTPUT)
+gpio.mode(CTRL, gpio.OUTPUT)
+gpio.mode(LIGHT, gpio.OUTPUT)
 conn = net.createConnection(net.TCP, 0) 
 
 function decode(str)
@@ -27,7 +36,8 @@ function decode(str)
 end
 
 function switch(isOn)
-  gpio.write(PIN, isOn and gpio.HIGH or gpio.LOW)
+  gpio.write(CTRL, isOn and gpio.HIGH or gpio.LOW)
+  gpio.write(LIGHT, isOn and gpio.LOW or gpio.HIGH)
 end
 
 function get(uri)
