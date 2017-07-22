@@ -6,6 +6,7 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
+  var RANGE_MIN = 5, RANGE_MAX = 60, RANGE_STEP = 5;
   var config
 
   function loadConfig(cb) {
@@ -21,7 +22,7 @@
     $.ajax({
       type: "POST",
       url: "/config",
-      data: JSON.stringify(config)
+      data: config
     }).done(function() {
       $(".control").each(function() {
         $(this).prop("disabled", false);
@@ -35,11 +36,24 @@
     update();
   }
 
-  function onChange(value, name) {
+  function onChange(name) {
+    var value = $("#_" + name).val();
     $("#_" + name).text(value);
     config[name] = value;
     saveConfig(config);
     update();
+  }
+
+  function changeBy(name, amount) {
+    console.log(".changeBy: name = " + name + ", amount = " + amount);
+    var value = Number($("#" + name).val());
+    value = value + amount;
+    if (value < RANGE_MIN)
+      value = RANGE_MIN;
+    if (value > RANGE_MAX)
+      value = RANGE_MAX;
+    console.log(".changeBy: ", $("#_" + name), "->", value);
+    $("#" + name).val(value);
   }
 
   function update() {
@@ -132,6 +146,31 @@
     .slider.round:before {
       border-radius: 50%;
     }
+
+    .arrow-right {
+      width: 0; 
+      height: 0; 
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 20px solid gray;
+    }
+
+    .arrow-left {
+      width: 0; 
+      height: 0; 
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent; 
+      border-right:20px solid gray; 
+    }
+
+    input.control, .arrow-right {
+      transform: translateX(-40px);
+    }
+
+    #_ontime, #_offtime {
+      transform: translateX(-30px);
+    }
+
   </style>
 </head>
 
@@ -139,8 +178,11 @@
 <h1 align="center">esp8266 fog controller</h1>
 
   <table align="center">
-    <tr><td>Интервал отворено:</td><td><input class = "control" id="ontime" type="range" min="5" max="60" value="10" step="5" onchange="onChange(this.value, 'ontime')" /></td><td><div id="_ontime"></div></td></tr>
-    <tr><td>Интервал затворено:</td><td><input class = "control" id="offtime" type="range" min="5" max="60" value="10" step="5" onchange="onChange(this.value, 'offtime')" /></td><td><div id="_offtime"></div></td></tr>
+    <tr><td>Интервал отворено:</td><td><div class="arrow-left" onclick="javascript:changeBy('ontime', -RANGE_STEP)"></div></td><td>
+<input class="control" id="ontime" type="range" min="5" max="60" value="10" step="5" onchange="onChange('ontime')" ></td><td><div class="arrow-right" onclick="javascript:changeBy('ontime', RANGE_STEP)"></div>
+</td><td><div id="_ontime"></div></td></tr>
+    <tr><td>Интервал затворено:</td><td><div class="arrow-left" onclick="javascript:changeBy('offtime', -RANGE_STEP)"></div></td><td><input class="control" id="offtime" type="range" min="5" max="60" value="10" step="5" onchange="onChange('offtime')" ></td><td><div class="arrow-right" onclick="javascript:changeBy('offtime', RANGE_STEP)"></div>
+</td><td><div id="_offtime"></div></td></tr>
     <tr><td>Контакт:</td><td><label valign="center" class="switch control">
     <input id="switch" type="checkbox" onclick="javascript:onCheck(this)">
     <div class="slider round"></div>

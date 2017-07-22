@@ -4,7 +4,7 @@
   "author": "alek",
   "description": "esp8266 fog controlling web application",
   "private": true,
-  "contributors": [ 
+  "contributors": [
     {
       "name": "Alexander Marinov",
       "email": "alekmarinov@gmail.com"
@@ -13,6 +13,7 @@
   "main": "./server.js",
   "dependencies": {
     "restify": ">= 2.6.0",
+    "restify-plugins": ">= 1.6.0",
     "async": ">= 0.9.0",
     "random-seed": ">= 0.2.0",
     "day-of-year": ">= 0.1.0"

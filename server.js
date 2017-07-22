@@ -1,4 +1,6 @@
 var restify  = require("restify")
+const restifyPlugins = require('restify-plugins')
+
 var EventEmitter = require('events').EventEmitter  
 var messageBus = new EventEmitter()  
 messageBus.setMaxListeners(100)  
@@ -8,9 +10,9 @@ var server = restify.createServer(
 	name: 'FogCtrl'
 })
 
-server.use(restify.bodyParser())
-server.use(restify.gzipResponse())
-server.use(restify.queryParser())
+server.use(restifyPlugins.bodyParser())
+server.use(restifyPlugins.gzipResponse())
+server.use(restifyPlugins.queryParser())
 
 // snippet taken from http://catapulty.tumblr.com/post/8303749793/heroku-and-node-js-how-to-get-the-client-ip-address
 function getClientIp(req) {
@@ -57,8 +59,8 @@ var config = {
 
 server.post('/config', function(req, res, next)
 {
-	config = JSON.parse(req.body);
-	console.log("POST", config);
+  config = req.body;
+  console.log("POST /config: ", config)
 	config.status = config.status || "off";
 	config.offtime = config.offtime || "10";
 	config.ontime = config.ontime || "10";
@@ -70,7 +72,7 @@ server.post('/config', function(req, res, next)
 
 server.get('/config', function(req, res, next)
 {
-	console.log("GET", config);
+  console.log("GET /config: ", config)
 	res.send(config);
 	return next();
 })
@@ -80,7 +82,7 @@ server.get('/longpoll', function(req, res, next)
 {
 	config.lastip = getClientIp(req);
 	config.lastaccess = getDateTime();
-	console.log("/longpoll", config)
+  console.log("GET /longpoll: ", config)
     messageBus.once('message', function(data){
         res.json(data)
     });
@@ -106,7 +108,7 @@ server.get("/shutdown", function(req, res, next)
 	}
 })
 
-server.get(".*", restify.serveStatic({
+server.get(".*", restify.plugins.serveStatic({
   directory: (process.env.FOGCTRL_HOME || '.') + "/static",
   default: "index.html"
 }))

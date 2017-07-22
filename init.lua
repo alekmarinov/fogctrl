@@ -8,6 +8,8 @@ WIFIPASS="08978211188"
 -- WIFIPASS="7654321098e"
 -- WIFIUSER="aviqus"
 -- WIFIPASS="tarantula4"
+-- WIFIUSER="intelibo"
+-- WIFIPASS="intelib@!"
 
 CTRL = 3
 LIGHT = 4
