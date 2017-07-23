@@ -1,10 +1,11 @@
 -- WIFIUSER="Juje"
 -- WIFIPASS="08978211188"
-WIFIUSER="aviqus"
-WIFIPASS="tarantula4"
--- WIFIUSER="intelibo"
--- WIFIPASS="intelib@!"
+-- WIFIUSER="aviqus"
+-- WIFIPASS="tarantula4"
+WIFIUSER="intelibo"
+WIFIPASS="intelib@!"
 
+VERSION = "1.0"
 CTRL = 3
 LIGHT = 4
 
@@ -41,12 +42,13 @@ function switch(isOn)
 end
 
 function get(uri)
+  print("GET "..uri)
    conn:send("GET "..uri
     .." HTTP/1.1\r\n" 
     .."Host: "..host..":"..port.."\r\n" 
    .."Connection: keep-alive\r\n"
     .."Accept: */*\r\n" 
-    .."User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n" 
+    .."User-Agent: FogCtrl "..VERSION.."\r\n" 
     .."\r\n")
 end
 
@@ -89,7 +91,6 @@ function reconfigure(conf)
       tmr.alarm(1, 1000*tonumber(conf.offtime), 0, ontimer)
   end
 
-
   tmr.stop(1)
 
   if conf.status == "on" then
@@ -103,10 +104,8 @@ conn:on("receive", function(conn, payload)
     -- skip header
     payload = payload:gsub(".-\r\n\r\n", "")
     print('Receive: '..payload)
-
     -- reconfigure the controller
     reconfigure(decode(payload))
-
     tmr.alarm(0, 100, 0, longpoll)
 end)
 
@@ -121,14 +120,16 @@ conn:on("disconnection", function(conn)
 end)
 
 switch(OFF)
-print("Connecting to "..host..":"..port)
-conn:connect(port, host)
+function reconnect()
+  print("Connecting to "..host..":"..port)
+  conn:connect(port, host)
+end
+reconnect()
 
-tmr.alarm(2, 60000, 0, function()
-	local ip = wifi.sta.getip()
-	print("IP is "..(ip or "NULL"))
-	if not ip or ip == "0.0.0.0" then
-		connectwifi()
-		conn:connect(port, host)
-	end
-end)
+-- tmr.alarm(2, 60000, 0, function()
+-- 	local ip = wifi.sta.getip()
+-- 	if not ip or ip == "0.0.0.0" then
+-- 		connectwifi()
+-- 		reconnect()
+-- 	end
+-- end)
