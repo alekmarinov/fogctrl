@@ -1,23 +1,21 @@
--------------------------------------------------------------------------------
-print('esp8266 fog controller')
--------------------------------------------------------------------------------
-
-WIFIUSER="Juje"
-WIFIPASS="08978211188"
--- WIFIUSER="Todor"
--- WIFIPASS="7654321098e"
--- WIFIUSER="aviqus"
--- WIFIPASS="tarantula4"
+-- WIFIUSER="Juje"
+-- WIFIPASS="08978211188"
+WIFIUSER="aviqus"
+WIFIPASS="tarantula4"
 -- WIFIUSER="intelibo"
 -- WIFIPASS="intelib@!"
 
 CTRL = 3
 LIGHT = 4
 
-wifi.setmode(wifi.STATIONAP)
-wifi.sta.disconnect()
-print("WiFi connect to "..WIFIUSER..":"..WIFIPASS)
-wifi.sta.config(WIFIUSER, WIFIPASS)
+function connectwifi()
+	wifi.setmode(wifi.STATIONAP)
+	wifi.sta.disconnect()
+	print("WiFi connect to "..WIFIUSER..":"..WIFIPASS)
+	wifi.sta.config(WIFIUSER, WIFIPASS)
+end
+
+connectwifi()
 
 host = 'fog.intelibo.com'
 port = 80
@@ -125,3 +123,12 @@ end)
 switch(OFF)
 print("Connecting to "..host..":"..port)
 conn:connect(port, host)
+
+tmr.alarm(2, 60000, 0, function()
+	local ip = wifi.sta.getip()
+	print("IP is "..(ip or "NULL"))
+	if not ip or ip == "0.0.0.0" then
+		connectwifi()
+		conn:connect(port, host)
+	end
+end)
