@@ -37,8 +37,9 @@
   }
 
   function onChange(name) {
-    var value = $("#_" + name).val();
+    var value = $("#" + name).val();
     $("#_" + name).text(value);
+    console.log(name, value)
     config[name] = value;
     saveConfig(config);
     update();
@@ -54,6 +55,7 @@
       value = RANGE_MAX;
     console.log(".changeBy: ", $("#_" + name), "->", value);
     $("#" + name).val(value);
+    onChange(name);
   }
 
   function update() {
