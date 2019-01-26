@@ -1,9 +1,5 @@
--- WIFIUSER="Juje"
--- WIFIPASS="08978211188"
--- WIFIUSER="aviqus"
--- WIFIPASS="tarantula4"
-WIFIUSER="intelibo"
-WIFIPASS="intelib@!"
+WIFIUSER="?"
+WIFIPASS="?"
 
 VERSION = "1.0"
 CTRL = 3
@@ -104,8 +100,10 @@ conn:on("receive", function(conn, payload)
     -- skip header
     payload = payload:gsub(".-\r\n\r\n", "")
     print('Receive: '..payload)
+
     -- reconfigure the controller
     reconfigure(decode(payload))
+
     tmr.alarm(0, 100, 0, longpoll)
 end)
 
@@ -116,20 +114,12 @@ end)
 
 conn:on("disconnection", function(conn) 
   print('\nDisconnected')
-  conn:connect(port, host)
+  tmr.alarm(2, 1000, 0, function()
+    print("Reconnecting to "..host..":"..port)
+    conn:connect(port, host)
+  end)
 end)
 
 switch(OFF)
-function reconnect()
-  print("Connecting to "..host..":"..port)
-  conn:connect(port, host)
-end
-reconnect()
-
--- tmr.alarm(2, 60000, 0, function()
--- 	local ip = wifi.sta.getip()
--- 	if not ip or ip == "0.0.0.0" then
--- 		connectwifi()
--- 		reconnect()
--- 	end
--- end)
+print("Connecting to "..host..":"..port)
+conn:connect(port, host)
